@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: mutant-detector-api
+    env: java
+    buildCommand: ./mvnw clean install -DskipTests
+    startCommand: java -Dserver.port=$PORT -jar target/MercadoLibre-1.0-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_VERSION
+        value: 17
+

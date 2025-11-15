@@ -1,0 +1,104 @@
+@startuml Diagrama de Secuencia - Mutant Detection API
+
+title Flujo de Detección de Mutantes - POST /mutant/
+
+actor Usuario
+participant "MutantController" as Controller
+participant "MutantService" as Service
+participant "MutantDetector\n(isMutant)" as Detector
+participant "DnaRepository" as Repository
+database "H2 Database" as DB
+
+== Detección de Mutante ==
+
+Usuario -> Controller: POST /mutant/\n{"dna":["ATGCGA",...]}
+activate Controller
+
+Controller -> Controller: Validar JSON\n(@Valid DnaRequest)
+
+Controller -> Service: analyzeDna(dna[])
+activate Service
+
+Service -> Service: generateHash(dna)\n(SHA-256)
+
+Service -> Repository: findByDnaHash(hash)
+activate Repository
+Repository -> DB: SELECT * WHERE dna_hash=?
+DB --> Repository: Optional<DnaRecord>
+Repository --> Service: Optional<DnaRecord>
+deactivate Repository
+
+alt ADN ya existe en BD
+    Service --> Controller: boolean isMutant\n(del registro existente)
+else ADN nuevo
+    Service -> Detector: isMutant(dna[])
+    activate Detector
+
+    Detector -> Detector: Validar matriz NxN\ny caracteres ATCG
+
+    loop Buscar secuencias
+        Detector -> Detector: Buscar horizontal
+        Detector -> Detector: Buscar vertical
+        Detector -> Detector: Buscar diagonal ↘
+        Detector -> Detector: Buscar diagonal ↗
+
+        alt Encuentra > 1 secuencia
+            Detector -> Detector: sequencesFound > 1\nreturn true
+        end
+    end
+
+    Detector --> Service: boolean result
+    deactivate Detector
+
+    Service -> Repository: save(new DnaRecord(hash, isMutant))
+    activate Repository
+    Repository -> DB: INSERT INTO dna_records\n(dna_hash, is_mutant, created_at)
+    DB --> Repository: DnaRecord saved
+    Repository --> Service: DnaRecord
+    deactivate Repository
+
+    Service --> Controller: boolean isMutant
+end
+
+deactivate Service
+
+alt Es mutante (true)
+    Controller --> Usuario: HTTP 200 OK\n{"message": "Es un mutante"}
+else No es mutante (false)
+    Controller --> Usuario: HTTP 403 Forbidden\n{"message": "No es un mutante"}
+end
+
+deactivate Controller
+
+== Obtener Estadísticas ==
+
+Usuario -> Controller: GET /stats
+activate Controller
+
+Controller -> Service: getStats()
+activate Service
+
+Service -> Repository: countByIsMutant(true)
+activate Repository
+Repository -> DB: SELECT COUNT(*)\nWHERE is_mutant=true
+DB --> Repository: count_mutant_dna
+Repository --> Service: count_mutant_dna
+deactivate Repository
+
+Service -> Repository: countByIsMutant(false)
+activate Repository
+Repository -> DB: SELECT COUNT(*)\nWHERE is_mutant=false
+DB --> Repository: count_human_dna
+Repository --> Service: count_human_dna
+deactivate Repository
+
+Service -> Service: Calcular ratio\nratio = mutant / human
+
+Service --> Controller: StatsResponse\n(count_mutant, count_human, ratio)
+deactivate Service
+
+Controller --> Usuario: HTTP 200 OK\n{"count_mutant_dna":40,\n"count_human_dna":100,\n"ratio":0.4}
+deactivate Controller
+
+@enduml
+
