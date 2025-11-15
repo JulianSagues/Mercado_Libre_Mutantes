@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MutantService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MercadoLibre</a> &gt; <a href="index.source.html" class="el_package">org.example.mercadolibre.service</a> &gt; <span class="el_source">MutantService.java</span></div><h1>MutantService.java</h1><pre class="source lang-java linenums">package org.example.mercadolibre.service;
+
+import org.example.mercadolibre.entity.Dna;
+import org.example.mercadolibre.repository.DnaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Optional;
+
+@Service
+<span class="fc" id="L14">public class MutantService {</span>
+
+    @Autowired
+    private DnaRepository dnaRepository;
+
+    /**
+     * Verifica si un ADN pertenece a un mutante
+     * @param dna Array de Strings que representa cada fila de una tabla de NxN
+     * @return true si es mutante, false si no lo es
+     */
+    public boolean isMutant(String[] dna) {
+        // Validaciones básicas
+<span class="fc bfc" id="L26" title="All 4 branches covered.">        if (dna == null || dna.length &lt; 4) {</span>
+<span class="fc" id="L27">            return false;</span>
+        }
+
+<span class="fc" id="L30">        int n = dna.length;</span>
+
+        // Validar que sea una matriz cuadrada y contenga solo caracteres válidos
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        for (String row : dna) {</span>
+<span class="pc bpc" id="L34" title="1 of 6 branches missed.">            if (row == null || row.length() != n || !row.matches(&quot;[ATCG]+&quot;)) {</span>
+<span class="fc" id="L35">                throw new IllegalArgumentException(&quot;ADN inválido: debe ser una matriz NxN con solo caracteres A, T, C, G&quot;);</span>
+            }
+        }
+
+<span class="fc" id="L39">        int sequencesFound = 0;</span>
+
+        // 1. Buscar secuencias horizontales
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        for (int i = 0; i &lt; n; i++) {</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">            for (int j = 0; j &lt;= n - 4; j++) {</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">                if (hasSequence(dna[i].substring(j, j + 4))) {</span>
+<span class="fc" id="L45">                    sequencesFound++;</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">                    if (sequencesFound &gt; 1) return true;</span>
+                }
+            }
+        }
+
+        // 2. Buscar secuencias verticales
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        for (int j = 0; j &lt; n; j++) {</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">            for (int i = 0; i &lt;= n - 4; i++) {</span>
+<span class="fc" id="L54">                StringBuilder vertical = new StringBuilder();</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">                for (int k = 0; k &lt; 4; k++) {</span>
+<span class="fc" id="L56">                    vertical.append(dna[i + k].charAt(j));</span>
+                }
+<span class="fc bfc" id="L58" title="All 2 branches covered.">                if (hasSequence(vertical.toString())) {</span>
+<span class="fc" id="L59">                    sequencesFound++;</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">                    if (sequencesFound &gt; 1) return true;</span>
+                }
+            }
+        }
+
+        // 3. Buscar secuencias diagonales (descendentes ↘)
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        for (int i = 0; i &lt;= n - 4; i++) {</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">            for (int j = 0; j &lt;= n - 4; j++) {</span>
+<span class="fc" id="L68">                StringBuilder diagonal = new StringBuilder();</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">                for (int k = 0; k &lt; 4; k++) {</span>
+<span class="fc" id="L70">                    diagonal.append(dna[i + k].charAt(j + k));</span>
+                }
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">                if (hasSequence(diagonal.toString())) {</span>
+<span class="nc" id="L73">                    sequencesFound++;</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">                    if (sequencesFound &gt; 1) return true;</span>
+                }
+            }
+        }
+
+        // 4. Buscar secuencias diagonales (ascendentes ↗)
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        for (int i = 3; i &lt; n; i++) {</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            for (int j = 0; j &lt;= n - 4; j++) {</span>
+<span class="fc" id="L82">                StringBuilder diagonal = new StringBuilder();</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">                for (int k = 0; k &lt; 4; k++) {</span>
+<span class="fc" id="L84">                    diagonal.append(dna[i - k].charAt(j + k));</span>
+                }
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">                if (hasSequence(diagonal.toString())) {</span>
+<span class="nc" id="L87">                    sequencesFound++;</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">                    if (sequencesFound &gt; 1) return true;</span>
+                }
+            }
+        }
+
+<span class="fc" id="L93">        return false;</span>
+    }
+
+    /**
+     * Verifica si una secuencia de 4 caracteres son todos iguales
+     */
+    private boolean hasSequence(String sequence) {
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        if (sequence.length() != 4) return false;</span>
+<span class="fc" id="L101">        char first = sequence.charAt(0);</span>
+<span class="fc" id="L102">        return sequence.equals(String.valueOf(first).repeat(4));</span>
+    }
+
+    /**
+     * Analiza el ADN y lo guarda en la base de datos
+     * @param dna Array de strings con el ADN
+     * @return true si es mutante, false si no
+     */
+    public boolean analyzeDna(String[] dna) {
+        // Generar hash único del ADN
+<span class="fc" id="L112">        String dnaHash = generateHash(dna);</span>
+
+        // Verificar si ya existe en la base de datos
+<span class="fc" id="L115">        Optional&lt;Dna&gt; existingDna = dnaRepository.findByDnaHash(dnaHash);</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if (existingDna.isPresent()) {</span>
+<span class="fc" id="L117">            return existingDna.get().isMutant();</span>
+        }
+
+        // Analizar el ADN
+<span class="fc" id="L121">        boolean isMutant = isMutant(dna);</span>
+
+        // Guardar en la base de datos
+<span class="fc" id="L124">        Dna dnaEntity = new Dna(dnaHash, isMutant, Arrays.toString(dna));</span>
+<span class="fc" id="L125">        dnaRepository.save(dnaEntity);</span>
+
+<span class="fc" id="L127">        return isMutant;</span>
+    }
+
+    /**
+     * Obtiene las estadísticas de verificaciones de ADN
+     */
+    public org.example.mercadolibre.dto.StatsResponse getStats() {
+<span class="fc" id="L134">        long countMutant = dnaRepository.countByIsMutant(true);</span>
+<span class="fc" id="L135">        long countHuman = dnaRepository.countByIsMutant(false);</span>
+
+<span class="fc" id="L137">        return new org.example.mercadolibre.dto.StatsResponse(countMutant, countHuman);</span>
+    }
+
+    /**
+     * Genera un hash SHA-256 del ADN para identificarlo de forma única
+     */
+    private String generateHash(String[] dna) {
+        try {
+<span class="fc" id="L145">            String dnaString = String.join(&quot;&quot;, dna);</span>
+<span class="fc" id="L146">            MessageDigest digest = MessageDigest.getInstance(&quot;SHA-256&quot;);</span>
+<span class="fc" id="L147">            byte[] hash = digest.digest(dnaString.getBytes());</span>
+<span class="fc" id="L148">            StringBuilder hexString = new StringBuilder();</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">            for (byte b : hash) {</span>
+<span class="fc" id="L150">                String hex = Integer.toHexString(0xff &amp; b);</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">                if (hex.length() == 1) hexString.append('0');</span>
+<span class="fc" id="L152">                hexString.append(hex);</span>
+            }
+<span class="fc" id="L154">            return hexString.toString();</span>
+<span class="nc" id="L155">        } catch (NoSuchAlgorithmException e) {</span>
+<span class="nc" id="L156">            throw new RuntimeException(&quot;Error al generar hash del ADN&quot;, e);</span>
+        }
+    }
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
