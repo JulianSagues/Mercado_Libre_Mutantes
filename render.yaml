@@ -1,10 +1,12 @@
 services:
   - type: web
     name: mutant-detector-api
-    env: java
-    buildCommand: ./mvnw clean install -DskipTests
+    env: docker
+    dockerfilePath: ./Dockerfile
+    buildCommand: ./mvnw.cmd -B clean package -DskipTests
     startCommand: java -Dserver.port=$PORT -jar target/MercadoLibre-1.0-SNAPSHOT.jar
     envVars:
+      - key: PORT
+        value: "8080"
       - key: JAVA_VERSION
-        value: 17
-
+        value: "17"

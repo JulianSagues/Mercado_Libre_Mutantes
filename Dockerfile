@@ -1,29 +1,26 @@
-# Etapa de compilación
-FROM maven:3.9-eclipse-temurin-17-alpine as build
+# Etapa de compilación: utiliza Maven con JDK 17 para construir la aplicación
+FROM maven:3.9-eclipse-temurin-17-alpine AS build
 
 WORKDIR /app
 
-# Copiar pom.xml primero (para cache de dependencias)
+# Copiar pom e instalar dependencias en cache
 COPY pom.xml .
-
-# Descargar dependencias
 RUN mvn dependency:go-offline -B
 
-# Copiar código fuente
+# Copiar el código fuente y compilar sin tests
 COPY src ./src
+RUN mvn clean package -DskipTests -DskipITs
 
-# Compilar con Maven
-RUN mvn clean install -DskipTests
-
-# Etapa de ejecución
+# Etapa de ejecución: JRE ligero
 FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
+# Puerto expuesto (la aplicación usará la variable de entorno PORT en Render)
 EXPOSE 8080
 
-# Copiar JAR compilado
-COPY --from=build /app/target/MercadoLibre-1.0-SNAPSHOT.jar ./app.jar
+# Copiar el JAR generado desde la etapa de build (acepta nombre variable)
+COPY --from=build /app/target/*.jar ./app.jar
 
-# Ejecutar aplicación
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Comando de arranque
+ENTRYPOINT ["java", "-jar", "./app.jar"]
