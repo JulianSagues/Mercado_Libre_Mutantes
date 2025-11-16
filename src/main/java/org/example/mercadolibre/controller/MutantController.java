@@ -24,6 +24,43 @@ public class MutantController {
     @Autowired
     private MutantService mutantService;
 
+    @GetMapping("/")
+    @Operation(summary = "Página de inicio", description = "Redirige a la documentación de la API")
+    public ResponseEntity<String> home() {
+        String html = "<!DOCTYPE html>" +
+                "<html>" +
+                "<head>" +
+                "<title>Mutant Detection API</title>" +
+                "<style>" +
+                "body { font-family: Arial, sans-serif; margin: 50px; background: #f0f0f0; }" +
+                ".container { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; }" +
+                "h1 { color: #333; }" +
+                "a { display: inline-block; margin: 10px 5px; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }" +
+                "a:hover { background: #0056b3; }" +
+                ".endpoints { margin-top: 30px; background: #f8f9fa; padding: 20px; border-radius: 5px; }" +
+                ".endpoint { margin: 10px 0; }" +
+                ".method { font-weight: bold; color: #28a745; }" +
+                "</style>" +
+                "</head>" +
+                "<body>" +
+                "<div class='container'>" +
+                "<h1>🧬 Mutant Detection API</h1>" +
+                "<p>API REST para detectar mutantes mediante análisis de secuencias de ADN</p>" +
+                "<div>" +
+                "<a href='/swagger-ui/index.html'>📚 Documentación Swagger</a>" +
+                "<a href='/stats'>📊 Ver Estadísticas</a>" +
+                "</div>" +
+                "<div class='endpoints'>" +
+                "<h3>Endpoints disponibles:</h3>" +
+                "<div class='endpoint'><span class='method'>POST</span> /mutant - Verificar si un ADN es mutante</div>" +
+                "<div class='endpoint'><span class='method'>GET</span> /stats - Obtener estadísticas</div>" +
+                "</div>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
+        return ResponseEntity.ok().header("Content-Type", "text/html; charset=UTF-8").body(html);
+    }
+
     @PostMapping("/mutant")
     @Operation(
             summary = "Detectar si un ADN es mutante",
