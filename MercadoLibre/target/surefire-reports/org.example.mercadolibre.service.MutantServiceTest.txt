@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.example.mercadolibre.service.MutantServiceTest
--------------------------------------------------------------------------------
-Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.620 s -- in org.example.mercadolibre.service.MutantServiceTest

@@ -1,8 +1,0 @@
-org\example\mercadolibre\repository\DnaRepository.class
-org\example\mercadolibre\Launcher.class
-org\example\mercadolibre\dto\StatsResponse.class
-org\example\mercadolibre\config\SwaggerConfig.class
-org\example\mercadolibre\dto\DnaRequest.class
-org\example\mercadolibre\service\MutantService.class
-org\example\mercadolibre\controller\MutantController.class
-org\example\mercadolibre\entity\Dna.class
