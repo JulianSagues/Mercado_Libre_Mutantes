@@ -283,23 +283,3 @@ services:
     buildCommand: ./gradlew build -x test
     startCommand: java -Dserver.port=$PORT -jar build/libs/MercadoLibre-1.0-SNAPSHOT.jar
 ```
-
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crea una rama feature (`git checkout -b feature/amazing-feature`)
-3. Commit tus cambios (`git commit -m 'Add amazing feature'`)
-4. Push a la rama (`git push origin feature/amazing-feature`)
-5. Abre un Pull Request
-
-## 📝 Licencia
-
-Este proyecto fue desarrollado como parte del challenge de MercadoLibre.
-
-## 👥 Autor
-
-**MercadoLibre Challenge 2025**
-
----
-
-⭐ Si te gustó el proyecto, dale una estrella!
