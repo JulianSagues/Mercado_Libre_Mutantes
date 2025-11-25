@@ -50,11 +50,6 @@ public class MutantController {
                 "<a href='/swagger-ui/index.html'>Documentación Swagger</a>" +
                 "<a href='/stats'>Ver Estadísticas</a>" +
                 "</div>" +
-                "<div class='endpoints'>" +
-                "<h3>Endpoints disponibles:</h3>" +
-                "<div class='endpoint'><span class='method'>POST</span> /mutant - Verificar si un ADN es mutante</div>" +
-                "<div class='endpoint'><span class='method'>GET</span> /stats - Obtener estadísticas</div>" +
-                "</div>" +
                 "</div>" +
                 "</body>" +
                 "</html>";

@@ -146,7 +146,6 @@ class MutantControllerIntegrationTest {
             }
             """;
 
-        // Primera llamada
         mockMvc.perform(post("/mutant")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mutantDna))
@@ -154,7 +153,6 @@ class MutantControllerIntegrationTest {
 
         long countAfterFirst = dnaRepository.count();
 
-        // Segunda llamada con el mismo DNA
         mockMvc.perform(post("/mutant")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mutantDna))
@@ -162,11 +160,8 @@ class MutantControllerIntegrationTest {
 
         long countAfterSecond = dnaRepository.count();
 
-        // Debe seguir siendo el mismo (no se duplicó)
         assert countAfterFirst == countAfterSecond : "No debería duplicar el DNA";
     }
-
-    // ========== Tests GET /stats ==========
 
     @Test
     void testGetStats_ShouldReturnCorrectStats_WhenNoData() throws Exception {
@@ -179,7 +174,6 @@ class MutantControllerIntegrationTest {
 
     @Test
     void testGetStats_ShouldReturnCorrectStats_AfterSendingData() throws Exception {
-        // Enviar 1 mutante
         String mutantDna = """
             {
               "dna": [
@@ -198,7 +192,6 @@ class MutantControllerIntegrationTest {
                 .content(mutantDna))
             .andExpect(status().isOk());
 
-        // Enviar 1 humano
         String humanDna = """
             {
               "dna": [
@@ -217,7 +210,6 @@ class MutantControllerIntegrationTest {
                 .content(humanDna))
             .andExpect(status().isForbidden());
 
-        // Verificar stats
         mockMvc.perform(get("/stats"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.count_mutant_dna").value(1))
@@ -227,7 +219,6 @@ class MutantControllerIntegrationTest {
 
     @Test
     void testGetStats_ShouldCalculateCorrectRatio() throws Exception {
-        // Enviar 2 mutantes únicos
         String mutant1 = """
             {
               "dna": [
@@ -264,7 +255,6 @@ class MutantControllerIntegrationTest {
                 .content(mutant2))
             .andExpect(status().isOk());
 
-        // Enviar 3 humanos únicos
         String human1 = """
             {
               "dna": [
@@ -319,15 +309,12 @@ class MutantControllerIntegrationTest {
                 .content(human3))
             .andExpect(status().isForbidden());
 
-        // Verificar stats: 2 mutantes / 3 humanos = 0.6666...
         mockMvc.perform(get("/stats"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.count_mutant_dna").value(2))
             .andExpect(jsonPath("$.count_human_dna").value(3))
             .andExpect(jsonPath("$.ratio").value(closeTo(0.67, 0.01)));
     }
-
-    // ========== Tests GET / (Home) ==========
 
     @Test
     void testGetHome_ShouldReturnHtmlPage() throws Exception {
@@ -337,8 +324,6 @@ class MutantControllerIntegrationTest {
             .andExpect(content().string(containsString("Mutant Detection API")))
             .andExpect(content().string(containsString("swagger-ui")));
     }
-
-    // ========== Tests de Validación ==========
 
     @Test
     void testPostMutant_ShouldReturn400_WhenDnaIsNull() throws Exception {
@@ -377,8 +362,6 @@ class MutantControllerIntegrationTest {
                 .content(malformedJson))
             .andExpect(status().isBadRequest());
     }
-
-    // ========== Tests de Secuencias Específicas ==========
 
     @Test
     void testPostMutant_ShouldDetectHorizontalSequences() throws Exception {
