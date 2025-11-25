@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: mutant-detector-api
+    env: docker
+    dockerfilePath: ./Dockerfile
+    buildCommand: ./gradlew build -x test
+    startCommand: java -Dserver.port=$PORT -jar build/libs/MercadoLibre-1.0-SNAPSHOT.jar
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: JAVA_VERSION
+        value: "17"
