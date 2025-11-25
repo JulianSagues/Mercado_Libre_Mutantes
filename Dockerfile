@@ -4,18 +4,16 @@ FROM gradle:8.5-jdk17-alpine AS build
 WORKDIR /app
 
 # Copiar archivos de configuración de Gradle
-COPY build.gradle settings.gradle gradlew ./
+COPY build.gradle settings.gradle ./
 COPY gradle ./gradle
-
-# Dar permisos de ejecución a gradlew
-RUN chmod +x ./gradlew
-
-# Descargar dependencias en cache
-RUN ./gradlew dependencies --no-daemon
-
-# Copiar el código fuente y compilar sin tests
 COPY src ./src
-RUN ./gradlew build -x test --no-daemon
+
+# Convertir CRLF a LF y dar permisos de ejecución
+RUN dos2unix ./gradle/wrapper/gradle-wrapper.sh 2>/dev/null || sed -i 's/\r$//' ./gradle/wrapper/gradle-wrapper.sh
+RUN chmod +x ./gradle/wrapper/gradle-wrapper.sh
+
+# Compilar sin tests
+RUN gradle build -x test --no-daemon
 
 # Etapa de ejecución: JRE ligero
 FROM eclipse-temurin:17-jre-alpine
