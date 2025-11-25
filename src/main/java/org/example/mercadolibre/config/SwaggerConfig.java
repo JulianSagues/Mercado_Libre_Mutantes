@@ -6,7 +6,6 @@ import io.swagger.v3.oas.models.info.Contact;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-// Configuración de Swagger/OpenAPI para documentación automática de la API
 @Configuration
 public class SwaggerConfig {
 
@@ -19,8 +18,8 @@ public class SwaggerConfig {
                         .description("API REST para detectar mutantes mediante análisis de secuencias de ADN. " +
                                    "Detecta si un humano es mutante basándose en su secuencia de ADN.")
                         .contact(new Contact()
-                                .name("MercadoLibre Challenge")
-                                .email("challenge@mercadolibre.com")));
+                                .name("MercadoLibre")
+                                .email("support@mercadolibre.com")));
     }
 }
 

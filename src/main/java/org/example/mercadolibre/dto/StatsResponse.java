@@ -2,7 +2,6 @@ package org.example.mercadolibre.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-// DTO para respuesta de estadísticas
 public class StatsResponse {
 
     @JsonProperty("count_mutant_dna")
@@ -20,7 +19,6 @@ public class StatsResponse {
     public StatsResponse(long countMutantDna, long countHumanDna) {
         this.countMutantDna = countMutantDna;
         this.countHumanDna = countHumanDna;
-        // Ratio = mutantes / humanos (0 si no hay humanos)
         this.ratio = countHumanDna == 0 ? 0 : (double) countMutantDna / countHumanDna;
     }
 

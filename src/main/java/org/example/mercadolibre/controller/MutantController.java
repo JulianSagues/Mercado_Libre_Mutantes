@@ -44,11 +44,11 @@ public class MutantController {
                 "</head>" +
                 "<body>" +
                 "<div class='container'>" +
-                "<h1>🧬 Mutant Detection API</h1>" +
+                "<h1>Mutant Detection API</h1>" +
                 "<p>API REST para detectar mutantes mediante análisis de secuencias de ADN</p>" +
                 "<div>" +
-                "<a href='/swagger-ui/index.html'>📚 Documentación Swagger</a>" +
-                "<a href='/stats'>📊 Ver Estadísticas</a>" +
+                "<a href='/swagger-ui/index.html'>Documentación Swagger</a>" +
+                "<a href='/stats'>Ver Estadísticas</a>" +
                 "</div>" +
                 "<div class='endpoints'>" +
                 "<h3>Endpoints disponibles:</h3>" +
@@ -105,7 +105,6 @@ public class MutantController {
         }
     }
 
-    // Endpoint GET /stats - Retorna estadísticas de ADN verificados
     @GetMapping("/stats")
     @Operation(summary = "Obtener estadísticas",
             description = "Devuelve estadísticas de las verificaciones de ADN")

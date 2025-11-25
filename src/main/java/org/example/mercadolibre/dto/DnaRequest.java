@@ -3,7 +3,6 @@ package org.example.mercadolibre.dto;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-// DTO para recibir secuencias de ADN en el endpoint /mutant
 public class DnaRequest {
 
     @NotNull(message = "El ADN no puede ser nulo")

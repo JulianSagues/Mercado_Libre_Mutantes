@@ -4,23 +4,23 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "dna_records")
+@Table(name = "adn_datos")
 public class Dna {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "dna_hash", nullable = false, unique = true, length = 64)
+    @Column(name = "adn_hash", nullable = false, unique = true, length = 64)
     private String dnaHash;
 
-    @Column(name = "is_mutant", nullable = false)
+    @Column(name = "es_mutante", nullable = false)
     private boolean isMutant;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "creacion", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "dna_sequence", columnDefinition = "TEXT")
+    @Column(name = "secuencia_adn", columnDefinition = "TEXT")
     private String dnaSequence;
 
     public Dna() {

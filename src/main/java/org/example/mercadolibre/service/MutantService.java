@@ -31,7 +31,6 @@ public class MutantService {
 
         int sequencesFound = 0;
 
-        // Horizontales
         for (int i = 0; i < n; i++) {
             for (int j = 0; j <= n - 4; j++) {
                 if (hasSequence(dna[i].substring(j, j + 4))) {
@@ -41,7 +40,6 @@ public class MutantService {
             }
         }
 
-        // Verticales
         for (int j = 0; j < n; j++) {
             for (int i = 0; i <= n - 4; i++) {
                 StringBuilder vertical = new StringBuilder();
@@ -55,7 +53,6 @@ public class MutantService {
             }
         }
 
-        // Diagonales descendentes ↘
         for (int i = 0; i <= n - 4; i++) {
             for (int j = 0; j <= n - 4; j++) {
                 StringBuilder diagonal = new StringBuilder();
@@ -69,7 +66,6 @@ public class MutantService {
             }
         }
 
-        // Diagonales ascendentes ↗
         for (int i = 3; i < n; i++) {
             for (int j = 0; j <= n - 4; j++) {
                 StringBuilder diagonal = new StringBuilder();
@@ -115,7 +111,6 @@ public class MutantService {
         return new org.example.mercadolibre.dto.StatsResponse(countMutant, countHuman);
     }
 
-    // Genera hash SHA-256 del ADN para identificarlo de forma única
     private String generateHash(String[] dna) {
         try {
             String dnaString = String.join("", dna);

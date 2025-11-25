@@ -26,11 +26,8 @@ class MutantControllerIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        // Limpiar la base de datos antes de cada test
         dnaRepository.deleteAll();
     }
-
-    // ========== Tests POST /mutant ==========
 
     @Test
     void testPostMutant_ShouldReturn200_WhenIsMutant() throws Exception {

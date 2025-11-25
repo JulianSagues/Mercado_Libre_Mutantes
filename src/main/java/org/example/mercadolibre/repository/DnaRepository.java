@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-// Repositorio JPA para acceso a datos de ADN
 @Repository
 public interface DnaRepository extends JpaRepository<Dna, Long> {
 
